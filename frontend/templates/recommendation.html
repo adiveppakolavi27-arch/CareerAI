@@ -1,0 +1,622 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareerAI | Recommended Jobs</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #F5F3FF;
+            color: #202344;
+        }
+
+        .navbar {
+            background: white;
+            padding: 18px 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .navbar-brand {
+            color: #6C63FF;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #6C63FF, #4388FF);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 35px;
+            font-weight: 800;
+        }
+
+        .hero p {
+            margin-top: 12px;
+            font-size: 14px;
+        }
+
+        .container-main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            margin-bottom: 35px;
+        }
+
+        .form-control {
+            padding: 12px;
+            border-radius: 9px;
+        }
+
+        .search-btn {
+            background: #6C63FF;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            padding: 12px 20px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .search-btn:hover {
+            background: #5148dc;
+        }
+
+        .job-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            transition: 0.3s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108,99,255,0.10);
+        }
+
+        .job-title {
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .company {
+            color: #6C63FF;
+            font-weight: 600;
+        }
+
+        .job-info {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .description {
+            color: #666;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .salary {
+            color: #16865d;
+            font-weight: 600;
+        }
+
+        .apply-btn {
+            display: inline-block;
+            background: #6C63FF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .apply-btn:hover {
+            background: #5148dc;
+            color: white;
+        }
+
+        .save-btn {
+            display: inline-block;
+            background: white;
+            color: #6C63FF;
+            border: 1px solid #6C63FF;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .save-btn:hover {
+            background: #6C63FF;
+            color: white;
+        }
+
+        /* TRACK APPLICATION BUTTON */
+
+        .track-btn {
+            display: inline-block;
+            background: #16865d;
+            color: white;
+            border: 1px solid #16865d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .track-btn:hover {
+            background: #116b49;
+            color: white;
+        }
+
+        .source {
+            background: #f0efff;
+            color: #6C63FF;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        footer {
+            background: #202344;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 60px;
+            font-size: 13px;
+        }
+
+        @media(max-width: 768px) {
+            .hero h1 {
+                font-size: 27px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg">
+
+        <div class="container">
+
+            <a class="navbar-brand" href="/">
+                CareerAI
+            </a>
+
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#menu">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div class="collapse navbar-collapse" id="menu">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload">Resume Analyzer</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/jobs">Job Finder</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/recommendations">Recommendations</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/saved-jobs">Saved Jobs</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/history">History</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/applications">Application Tracker</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <h1>Recommended Jobs For You 🚀</h1>
+
+        <p>
+            Discover opportunities based on your resume skills.
+        </p>
+
+    </section>
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="container-main">
+
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+
+                        {{ message }}
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- LOCATION SEARCH -->
+
+        <div class="search-box">
+
+            <form method="POST" action="{{ url_for('jobs.job_recommendations') }}">
+
+                <label class="form-label fw-semibold">
+                    Preferred Job Location
+                </label>
+
+                <div class="row g-3">
+
+                    <div class="col-md-9">
+
+                        <input
+                            type="text"
+                            name="location"
+                            class="form-control"
+                            value="{{ location }}"
+                            placeholder="Example: Bengaluru"
+                        >
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <button type="submit" class="search-btn">
+                            Find My Jobs
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- PAGE TITLE -->
+
+        <h2 class="fw-bold mb-2">
+            Your Job Recommendations
+        </h2>
+
+        <p class="text-muted mb-4">
+            Jobs discovered using your latest resume analysis.
+        </p>
+
+
+        <!-- ERROR MESSAGE -->
+
+        {% if message %}
+
+            <div class="alert alert-info">
+                {{ message }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- RECOMMENDED JOBS -->
+
+        {% if jobs %}
+
+            <p class="text-muted">
+                Found {{ jobs|length }} recommended opportunities.
+            </p>
+
+            {% for job in jobs %}
+
+                <div class="job-card">
+
+                    <div class="row">
+
+                        <div class="col-md-9">
+
+                            <h3 class="job-title">
+                                {{ job.title }}
+                            </h3>
+
+                            <p class="company">
+                                🏢 {{ job.company }}
+                            </p>
+
+                            <p class="job-info">
+                                📍 {{ job.location }}
+                                | 🗓️ {{ job.created or "Date unavailable" }}
+                            </p>
+
+                            <p class="description">
+                                {{ job.description }}
+                            </p>
+
+
+                            {% if job.salary_min or job.salary_max %}
+
+                                <p class="salary">
+
+                                    💰 Salary:
+
+                                    {% if job.salary_min %}
+                                        ₹{{ "{:,.0f}".format(job.salary_min) }}
+                                    {% endif %}
+
+                                    {% if job.salary_min and job.salary_max %}
+                                        -
+                                    {% endif %}
+
+                                    {% if job.salary_max %}
+                                        ₹{{ "{:,.0f}".format(job.salary_max) }}
+                                    {% endif %}
+
+                                </p>
+
+                            {% else %}
+
+                                <p class="salary">
+                                    Salary not disclosed
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- JOB ACTIONS -->
+
+                        <div class="col-md-3 text-md-end mt-3 mt-md-0">
+
+                            <span class="source">
+                                {{ job.source }}
+                            </span>
+
+                            <br><br>
+
+                            {% if job.apply_url %}
+
+                                <a
+                                    href="{{ job.apply_url }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="apply-btn"
+                                >
+                                    Apply Now →
+                                </a>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Application link unavailable
+                                </span>
+
+                            {% endif %}
+
+
+                            <!-- SAVE JOB BUTTON -->
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('saved_jobs.save_job') }}"
+                                class="mt-2"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="job_id"
+                                    value="{{ job.id }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="title"
+                                    value="{{ job.title }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="company"
+                                    value="{{ job.company or '' }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="location"
+                                    value="{{ job.location or '' }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="description"
+                                    value="{{ job.description or '' }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="apply_url"
+                                    value="{{ job.apply_url or '' }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="source"
+                                    value="{{ job.source or 'Adzuna' }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="save-btn"
+                                >
+                                    ♡ Save Job
+                                </button>
+
+                            </form>
+
+
+                            <!-- TRACK APPLICATION BUTTON -->
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('applications.add_application') }}"
+                                class="mt-2"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="job_id"
+                                    value="{{ job.id }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="job_title"
+                                    value="{{ job.title }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="company"
+                                    value="{{ job.company or '' }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="location"
+                                    value="{{ job.location or '' }}"
+                                >
+
+                                <input
+                                    type="hidden"
+                                    name="apply_url"
+                                    value="{{ job.apply_url or '' }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="track-btn"
+                                >
+                                    + Track Application
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            © 2026 CareerAI. All Rights Reserved.
+        </p>
+
+        <p>
+            Job listings provided by Adzuna.
+            <a href="https://www.adzuna.in/"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="text-white">
+                Visit Adzuna
+            </a>
+        </p>
+
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+```

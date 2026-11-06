@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Resume Analyzer | Upload Resume</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            background: #F5F3FF;
+            font-family: Arial, sans-serif;
+            color: #202344;
+        }
+
+        .navbar {
+            background: #202344;
+            padding: 15px;
+        }
+
+        .upload-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.07);
+        }
+
+        .upload-box {
+            border: 2px dashed #6C63FF;
+            padding: 35px 20px;
+            border-radius: 15px;
+            text-align: center;
+            background: #F9F8FF;
+        }
+
+        .upload-icon {
+            font-size: 55px;
+        }
+
+        .upload-btn {
+            background: #6C63FF;
+            color: white;
+            padding: 13px 30px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .upload-btn:hover {
+            background: #5148e5;
+            color: white;
+        }
+
+        .score-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.05);
+            border: 1px solid #eeeaff;
+        }
+
+        .result-box {
+            background: #F5F3FF;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+        }
+
+        .resume-text {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            max-height: 350px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .skill-badge {
+            background: #6C63FF;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .ats-chart-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 25px auto;
+        }
+
+        .ats-chart-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            width: 130px;
+        }
+
+        .ats-chart-score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #6C63FF;
+        }
+
+        .score-number {
+            font-size: 55px;
+            font-weight: bold;
+            color: #6C63FF;
+        }
+
+        .progress {
+            height: 13px;
+            border-radius: 10px;
+            background: #E8E6F5;
+        }
+
+        .progress-bar {
+            background: #6C63FF;
+            border-radius: 10px;
+        }
+
+        .job-textarea {
+            border: 1px solid #D8D5F0;
+            border-radius: 10px;
+            resize: vertical;
+        }
+
+        .job-textarea:focus {
+            border-color: #6C63FF;
+            box-shadow: 0 0 0 0.2rem rgba(108,99,255,0.15);
+        }
+
+        .match-card {
+            background: linear-gradient(135deg, #F5F3FF, #FFFFFF);
+            border: 1px solid #DED9FF;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .match-number {
+            font-size: 52px;
+            font-weight: bold;
+            color: #6C63FF;
+        }
+
+        .compatibility-badge {
+            display: inline-block;
+            background: #E8E5FF;
+            color: #5148e5;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+
+        .matching-skill {
+            background: #D1F7E2;
+            color: #137A43;
+            padding: 9px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 4px;
+        }
+
+        .missing-skill {
+            background: #FFE0E0;
+            color: #B42318;
+            padding: 9px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 4px;
+        }
+
+        .required-skill {
+            background: #E4E7FF;
+            color: #5148e5;
+            padding: 9px 14px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 4px;
+        }
+
+        .category-card {
+            background: #FAF9FF;
+            border: 1px solid #E6E1FF;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+        }
+
+        .recommendation {
+            background: #FFF8E8;
+            border-left: 4px solid #F5B942;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .gemini-card {
+            background: linear-gradient(135deg, #FFFFFF, #F5F3FF);
+            border: 1px solid #DED9FF;
+        }
+
+        .gemini-heading {
+            color: #6C63FF;
+            font-weight: bold;
+        }
+
+        .gemini-content {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .download-btn {
+            background: #6C63FF;
+            color: white;
+            padding: 14px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .download-btn:hover {
+            background: #5148e5;
+            color: white;
+        }
+
+        @media(max-width: 576px) {
+            .upload-container {
+                padding: 18px;
+                margin: 15px auto;
+            }
+
+            .match-number {
+                font-size: 42px;
+            }
+
+            .ats-chart-container {
+                width: 220px;
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav class="navbar navbar-dark">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="/">
+            AI Resume Analyzer
+        </a>
+
+        <a href="{{ url_for('auth.dashboard') }}"
+           class="btn btn-light">
+            Dashboard
+        </a>
+
+    </div>
+</nav>
+
+
+<div class="container">
+
+<div class="upload-container">
+
+    <h2 class="text-center fw-bold">
+        AI Resume Analyzer
+    </h2>
+
+    <p class="text-center text-muted mb-4">
+        Upload your resume and discover your job compatibility.
+    </p>
+
+
+    <!-- ERROR MESSAGE -->
+
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+
+    <!-- SUCCESS MESSAGE -->
+
+    {% if success %}
+    <div class="alert alert-success">
+        {{ success }}
+    </div>
+    {% endif %}
+
+
+    <!-- UPLOAD FORM -->
+
+    <form method="POST"
+          action="{{ url_for('analysis.upload_resume') }}"
+          enctype="multipart/form-data">
+
+        <div class="upload-box">
+
+            <div class="upload-icon">📄</div>
+
+            <h4>Select Your Resume</h4>
+
+            <p class="text-muted">
+                Supported format: PDF
+            </p>
+
+            <input
+                type="file"
+                name="resume"
+                class="form-control mt-3"
+                accept=".pdf,application/pdf"
+                required>
+
+        </div>
+
+
+        <!-- JOB DESCRIPTION -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold">
+                🎯 Target Job Description
+            </h5>
+
+            <p class="text-muted">
+                Paste the job description to compare your skills
+                with employer requirements.
+            </p>
+
+            <textarea
+                name="job_description"
+                class="form-control job-textarea"
+                rows="7"
+                placeholder="Enter job requirements here...">{{ job_description or '' }}</textarea>
+
+            <small class="text-muted">
+                Optional: Enter a job description for compatibility analysis.
+            </small>
+
+        </div>
+
+
+        <div class="text-center">
+
+            <button type="submit" class="upload-btn">
+                🚀 Upload & Analyze Resume
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <!-- ANALYSIS RESULTS -->
+
+    {% if resume_text %}
+
+
+    <!-- PDF EXTRACTION -->
+
+    <div class="result-box">
+
+        <h4 class="text-success">
+            ✅ PDF Text Extraction Successful
+        </h4>
+
+        <p>
+            <strong>File:</strong> {{ filename }}
+        </p>
+
+        <hr>
+
+        <h5>Extracted Resume Content</h5>
+
+        <div class="resume-text">{{ resume_text }}</div>
+
+    </div>
+
+
+    <!-- DETECTED SKILLS -->
+
+    <div class="score-card">
+
+        <h4>🎯 Detected Skills</h4>
+
+        <p class="text-muted">
+            Skills identified from your resume.
+        </p>
+
+        {% if skills %}
+
+            <div class="d-flex flex-wrap gap-2">
+
+                {% for skill in skills %}
+
+                    <span class="skill-badge">
+                        {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="alert alert-warning">
+                No matching skills detected.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- RESUME QUALITY ANALYSIS -->
+
+    {% if quality_result %}
+
+    <div class="score-card">
+
+        <h4 class="fw-bold mb-3">
+            ⭐ Resume Quality Analysis
+        </h4>
+
+        <p class="text-muted">
+            A rule-based review of your resume structure and content.
+        </p>
+
+        <div class="match-card mb-4">
+
+            <div class="match-number">
+                {{ quality_result.quality_score }}%
+            </div>
+
+            <h5 class="fw-bold">
+                Resume Quality Score
+            </h5>
+
+            <span class="compatibility-badge">
+                {{ quality_result.category }}
+            </span>
+
+            <div class="progress mt-3">
+
+                <div class="progress-bar"
+                     role="progressbar"
+                     style=`width: {{ quality_result.quality_score }}%`
+                     aria-valuenow="{{ quality_result.quality_score }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+
+            </div>
+
+            <small class="text-muted">
+                Estimated score from six basic checks.
+            </small>
+
+        </div>
+
+
+        <div class="row text-center mb-4">
+
+            <div class="col-md-6 mb-3">
+
+                <div class="category-card">
+
+                    <h3 class="fw-bold text-primary">
+                        {{ quality_result.word_count }}
+                    </h3>
+
+                    <p class="mb-0">Total Words</p>
+
+                </div>
+
+            </div>
+
+            <div class="col-md-6 mb-3">
+
+                <div class="category-card">
+
+                    <h3 class="fw-bold text-primary">
+                        {{ quality_result.bullet_count }}
+                    </h3>
+
+                    <p class="mb-0">Bullet Points</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DETECTED SECTIONS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold text-success">
+                ✅ Detected Resume Sections
+            </h5>
+
+            {% if quality_result.detected_sections %}
+
+                {% for section in quality_result.detected_sections %}
+
+                    <span class="matching-skill">
+                        {{ section }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="text-muted">
+                    No recognized sections detected.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- MISSING SECTIONS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold text-danger">
+                ⚠️ Sections to Consider Adding
+            </h5>
+
+            {% if quality_result.missing_sections %}
+
+                {% for section in quality_result.missing_sections %}
+
+                    <span class="missing-skill">
+                        {{ section }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-success">
+                    All recognized sections were detected.
+                </div>
+
+            {% endif %}
+
+            <small class="text-muted">
+                Only add sections that are relevant to your background.
+            </small>
+
+        </div>
+
+
+        <!-- ACTION VERBS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold">
+                💼 Detected Professional Action Verbs
+            </h5>
+
+            {% if quality_result.detected_action_verbs %}
+
+                {% for verb in quality_result.detected_action_verbs %}
+
+                    <span class="required-skill">
+                        {{ verb | title }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-warning">
+                    No recognized action verbs detected.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- RESUME STRENGTHS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold text-success">
+                💪 Resume Strengths
+            </h5>
+
+            {% if quality_result.strengths %}
+
+                {% for strength in quality_result.strengths %}
+
+                    <div class="recommendation"
+                         style="background: #E8F8EF; border-left-color: #2ECC71;">
+
+                        ✅ {{ strength }}
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p class="text-muted">
+                    No strengths were identified by the current checks.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- IMPROVEMENT SUGGESTIONS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold">
+                💡 Resume Improvement Suggestions
+            </h5>
+
+            {% if quality_result.suggestions %}
+
+                {% for suggestion in quality_result.suggestions %}
+
+                    <div class="recommendation">
+                        📌 {{ suggestion }}
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-success">
+                    No additional suggestions were generated.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- REPEATED WORDS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold">
+                🔁 Frequently Repeated Words
+            </h5>
+
+            {% if quality_result.repeated_words %}
+
+                {% for word, count in quality_result.repeated_words.items() %}
+
+                    <span class="missing-skill">
+                        {{ word }} ({{ count }} times)
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-success">
+                    No frequently repeated words detected.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <div class="alert alert-info mt-4 mb-0">
+
+            <strong>Note:</strong>
+
+            This is a basic rule-based estimate, not an official ATS rating
+            or a professional evaluation of your resume.
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ATS SCORE -->
+
+    {% if ats_result %}
+
+    <div class="score-card">
+
+        <h4>📊 ATS Resume Score</h4>
+
+        <p class="text-muted">
+            Estimated resume quality score.
+        </p>
+
+        <div class="text-center">
+
+            <div class="ats-chart-container">
+
+                <canvas id="atsScoreChart"></canvas>
+
+                <div class="ats-chart-center">
+
+                    <div class="ats-chart-score">
+                        {{ ats_score }}
+                    </div>
+
+                    <small>Out of 100</small>
+
+                </div>
+
+            </div>
+
+            <h5 class="text-success fw-bold">
+                {{ ats_result.category }}
+            </h5>
+
+        </div>
+
+
+        <hr>
+
+        <h5 class="mb-4">Score Breakdown</h5>
+
+        {% for category, marks in ats_result.breakdown.items() %}
+
+            {% if category == 'Skills' %}
+
+                {% set maximum = 30 %}
+
+            {% elif category == 'Resume Content' %}
+
+                {% set maximum = 10 %}
+
+            {% else %}
+
+                {% set maximum = 15 %}
+
+            {% endif %}
+
+            {% set percentage = (marks / maximum * 100) | int %}
+
+            <div class="mb-4">
+
+                <div class="d-flex justify-content-between mb-2">
+
+                    <strong>{{ category }}</strong>
+
+                    <span>{{ marks }}/{{ maximum }}</span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        role="progressbar"
+                        style=`width: {{ percentage }}%`
+                        aria-valuenow="{{ percentage }}"
+                        aria-valuemin="0"
+                        aria-valuemax="100">
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+
+        <div class="alert alert-info mt-3">
+
+            <strong>Note:</strong>
+
+            This is an estimated score based on our project's
+            scoring rules. It is not an official ATS rating.
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ADVANCED JOB MATCHING -->
+
+    {% if jd_result %}
+
+    <div class="score-card">
+
+        <h4>🎯 Advanced Job Compatibility Analysis</h4>
+
+        <p class="text-muted">
+            Detailed comparison of your resume against the target job.
+        </p>
+
+
+        <!-- MATCH PERCENTAGE -->
+
+        <div class="match-card">
+
+            <div class="match-number">
+                {{ jd_result.match_percentage }}%
+            </div>
+
+            <h5 class="fw-bold">
+                Job Skill Match
+            </h5>
+
+            <p class="text-muted">
+                Percentage of recognized required skills found in your resume.
+            </p>
+
+            <div class="progress mt-3">
+
+                <div
+                    class="progress-bar"
+                    role="progressbar"
+                    style=`width: {{ jd_result.match_percentage }}%`
+                    aria-valuenow="{{ jd_result.match_percentage }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+                </div>
+
+            </div>
+
+            <div class="mt-4">
+
+                <span class="compatibility-badge">
+                    {{ jd_result.compatibility }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- MATCHING SKILLS -->
+
+        <div class="mt-4">
+
+            <h5 class="text-success fw-bold">
+                ✅ Matching Skills
+            </h5>
+
+            {% if jd_result.matching_skills %}
+
+                {% for skill in jd_result.matching_skills %}
+
+                    <span class="matching-skill">
+                        {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-warning">
+                    No matching skills detected.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- MISSING SKILLS -->
+
+        <div class="mt-4">
+
+            <h5 class="text-danger fw-bold">
+                ❌ Missing Skills
+            </h5>
+
+            {% if jd_result.missing_skills %}
+
+                {% for skill in jd_result.missing_skills %}
+
+                    <span class="missing-skill">
+                        {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-success">
+                    No missing skills detected from our skill database.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- REQUIRED SKILLS -->
+
+        <div class="mt-4">
+
+            <h5 class="fw-bold">
+                📋 Required Skills
+            </h5>
+
+            {% if jd_result.required_skills %}
+
+                {% for skill in jd_result.required_skills %}
+
+                    <span class="required-skill">
+                        {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="alert alert-warning">
+                    No recognized skills were found in the job description.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- CATEGORY ANALYSIS -->
+
+        {% if jd_result.categorized_skills %}
+
+        <hr class="my-4">
+
+        <h5 class="fw-bold">
+            📚 Category-wise Skill Analysis
+        </h5>
+
+        {% for category, details in jd_result.categorized_skills.items() %}
+
+            <div class="category-card">
+
+                <h6 class="fw-bold">
+                    {{ category }}
+                </h6>
+
+                <p class="text-success mb-2">
+                    Matching: {{ details.matching | join(', ') if details.matching else 'None' }}
+                </p>
+
+                <p class="text-danger mb-2">
+                    Missing: {{ details.missing | join(', ') if details.missing else 'None' }}
+                </p>
+
+                <p class="text-muted mb-0">
+                    Required: {{ details.required | join(', ') }}
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+        {% endif %}
+
+
+        <!-- LEARNING RECOMMENDATIONS -->
+
+        <hr class="my-4">
+
+        <h5 class="fw-bold">
+            💡 Skill Improvement Recommendations
+        </h5>
+
+        {% if jd_result.recommendations %}
+
+            {% for recommendation in jd_result.recommendations %}
+
+                <div class="recommendation">
+                    📌 {{ recommendation }}
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="alert alert-success">
+                All recognized required skills were found in your resume.
+            </div>
+
+        {% endif %}
+
+
+        <div class="alert alert-info mt-4">
+
+            <strong>Important:</strong>
+
+            This is an estimated skill match based on the project's
+            skill database. It is not a hiring prediction or official ATS score.
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- GEMINI AI ANALYSIS -->
+
+    {% if gemini_result %}
+
+    <div class="score-card gemini-card">
+
+        <h4 class="gemini-heading mb-3">
+            🤖 Gemini AI Resume Analysis
+        </h4>
+
+        <p class="text-muted">
+            AI-powered feedback to help you understand and improve your resume.
+        </p>
+
+        {% if gemini_result.success %}
+
+            <div class="alert alert-success">
+                Gemini AI analysis completed successfully!
+            </div>
+
+            <hr>
+
+            <h5 class="fw-bold">
+                📋 Professional Resume Feedback
+            </h5>
+
+            <div class="gemini-content mt-3">{{ gemini_result.analysis }}</div>
+
+        {% else %}
+
+            <div class="alert alert-warning">
+
+                <strong>Gemini AI analysis unavailable.</strong>
+
+                <br>
+
+                {{ gemini_result.error }}
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="alert alert-info mt-4 mb-0">
+
+            <strong>Important:</strong>
+
+            Review AI recommendations and make sure
+            all information in your resume is accurate.
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- PDF REPORT DOWNLOAD -->
+
+    {% if report_name %}
+
+    <div class="score-card text-center">
+
+        <h4 class="fw-bold mb-3">
+            📄 Your Resume Analysis Report
+        </h4>
+
+        <p class="text-muted">
+            Your analysis report is ready.
+            Download it to keep a copy of your results.
+        </p>
+
+        <a
+            href="{{ url_for('analysis.download_report', report_name=report_name) }}"
+            class="download-btn mt-3">
+
+            📥 Download PDF Analysis Report
+
+        </a>
+
+    </div>
+
+    {% endif %}
+
+    {% endif %}
+
+
+    <!-- BACK TO DASHBOARD -->
+
+    <div class="text-center mt-4">
+
+        <a href="{{ url_for('auth.dashboard') }}">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- ATS DOUGHNUT CHART -->
+
+{% if ats_result %}
+
+<script>
+
+    const atsScore = Math.max(
+        0,
+        Math.min(100, Number("{{ ats_score }}") || 0)
+    );
+
+    const remainingScore = 100 - atsScore;
+
+    const chartCanvas = document.getElementById("atsScoreChart");
+
+    if (chartCanvas) {
+
+        new Chart(chartCanvas, {
+
+            type: "doughnut",
+
+            data: {
+
+                labels: [
+                    "Score Achieved",
+                    "Remaining Score"
+                ],
+
+                datasets: [{
+
+                    data: [
+                        atsScore,
+                        remainingScore
+                    ],
+
+                    backgroundColor: [
+                        "#6C63FF",
+                        "#E8E6F5"
+                    ],
+
+                    borderWidth: 0,
+
+                    hoverOffset: 8
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                cutout: "75%",
+
+                rotation: -90,
+
+                plugins: {
+
+                    legend: {
+                        display: false
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+
+{% endif %}
+
+</body>
+</html>

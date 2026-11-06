@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Learning Dashboard | CareerAI</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4F8CFF;
+            --background: #F5F3FF;
+            --text: #202344;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: white;
+            padding: 16px 5%;
+            box-shadow: 0 2px 12px rgba(0,0,0,.05);
+        }
+
+        .brand {
+            font-size: 25px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #6C63FF, #4F8CFF);
+            color: white;
+            padding: 55px 6%;
+            border-radius: 0 0 30px 30px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 800;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 18px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 23px;
+            height: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,.04);
+        }
+
+        .stat-card h2 {
+            color: var(--primary);
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        .section-title {
+            font-weight: 750;
+            margin-bottom: 22px;
+        }
+
+        .career-card {
+            background: white;
+            border: none;
+            border-radius: 17px;
+            padding: 24px;
+            height: 100%;
+            transition: .25s;
+            box-shadow: 0 4px 15px rgba(0,0,0,.04);
+        }
+
+        .career-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(108,99,255,.13);
+        }
+
+        .career-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #EEECFF;
+            font-size: 27px;
+            margin-bottom: 17px;
+        }
+
+        .career-card h5 {
+            font-weight: bold;
+            min-height: 45px;
+        }
+
+        .career-card p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 9px;
+            border-radius: 20px;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #6C63FF, #4F8CFF);
+        }
+
+        .btn-primary-custom {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 9px;
+            padding: 10px 18px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary-custom:hover {
+            background: #554CE0;
+            color: white;
+        }
+
+        .continue-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.04);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        @media(max-width: 600px) {
+            .hero h1 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a href="/dashboard" class="brand">CareerAI</a>
+
+        <div>
+            <a href="/dashboard" class="btn btn-outline-primary">
+                Main Dashboard
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <h1>My Learning Dashboard 🚀</h1>
+
+        <p class="mt-3">
+            Build your skills, explore career opportunities and achieve
+            your professional goals.
+        </p>
+
+        <p class="mb-0">
+            Choose a career path and start learning today.
+        </p>
+    </div>
+</section>
+
+<div class="main-container">
+
+    <!-- STATISTICS -->
+    <h3 class="section-title">Your Learning Overview</h3>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div>📚 Total Career Paths</div>
+                <h2>10</h2>
+                <small class="text-muted">Available learning paths</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div>✅ Completed Topics</div>
+                <h2 id="completedTopics">0</h2>
+                <small class="text-muted">Topics you have completed</small>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div>📈 Overall Progress</div>
+                <h2 id="overallPercentage">0%</h2>
+
+                <div class="progress mt-2">
+                    <div class="progress-bar" id="overallProgress"
+                         style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CONTINUE LEARNING -->
+    <h3 class="section-title">Continue Learning</h3>
+
+    <div class="continue-card mb-5">
+        <h5>🐍 Python Development</h5>
+
+        <p class="text-muted">
+            Continue your journey from Python fundamentals to advanced
+            application development.
+        </p>
+
+        <a href="/learning/python" class="btn-primary-custom">
+            Continue Learning →
+        </a>
+    </div>
+
+    <!-- CAREER PATHS -->
+    <h3 class="section-title">Explore Career Paths</h3>
+
+    <div class="row g-4">
+
+        <!-- PYTHON -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🐍</div>
+                <h5>Python Development</h5>
+                <p>Master Python from basics to advanced programming.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="pythonProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/python" class="btn-primary-custom">
+                    Explore Roadmap →
+                </a>
+            </div>
+        </div>
+
+        <!-- AI -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🤖</div>
+                <h5>Artificial Intelligence</h5>
+                <p>Understand intelligent systems and AI technologies.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="aiProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/artificial-intelligence"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- ML -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🧠</div>
+                <h5>Machine Learning</h5>
+                <p>Learn algorithms, prediction and model development.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="mlProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/machine-learning"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- DEEP LEARNING -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🔬</div>
+                <h5>Deep Learning</h5>
+                <p>Explore neural networks and advanced AI models.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="dlProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/deep-learning"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- DATA SCIENCE -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">📊</div>
+                <h5>Data Science</h5>
+                <p>Learn data analysis, statistics and visualization.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="dsProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/data-science"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- SQL -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🗄️</div>
+                <h5>SQL & Database Management</h5>
+                <p>Master database design and SQL queries.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="sqlProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/sql"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- FULL STACK -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🌐</div>
+                <h5>Full-Stack Web Development</h5>
+                <p>Build complete websites and web applications.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="webdevProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/full-stack"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- DSA -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">⚙️</div>
+                <h5>Data Structures & Algorithms</h5>
+                <p>Improve logical thinking and coding problem-solving.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="dsaProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/dsa"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- GENERATIVE AI -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">✨</div>
+                <h5>Generative AI & LLM Development</h5>
+                <p>Learn LLMs, prompt engineering and AI applications.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="genaiProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/generative-ai"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+        <!-- PLACEMENT -->
+        <div class="col-md-6 col-lg-4">
+            <div class="career-card">
+                <div class="career-icon">🎯</div>
+                <h5>Placement & Interview Preparation</h5>
+                <p>Prepare for technical interviews and placements.</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" id="placementProgress"
+                         style="width:0%"></div>
+                </div>
+                <a href="/learning/placement"
+                   class="btn-primary-custom">Explore Roadmap →</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 CareerAI | Learn • Build • Grow
+</footer>
+
+<script>
+    const roadmaps = [
+        "python",
+        "ai",
+        "ml",
+        "dl",
+        "ds",
+        "sql",
+        "webdev",
+        "dsa",
+        "genai",
+        "placement"
+    ];
+
+    async function loadDashboardProgress() {
+        let totalTopics = 0;
+        let completedTopics = 0;
+
+        const progressIds = {
+            python: "pythonProgress",
+            ai: "aiProgress",
+            ml: "mlProgress",
+            dl: "dlProgress",
+            ds: "dsProgress",
+            sql: "sqlProgress",
+            webdev: "webdevProgress",
+            dsa: "dsaProgress",
+            genai: "genaiProgress",
+            placement: "placementProgress"
+        };
+
+        for (const roadmap of roadmaps) {
+            try {
+                const response = await fetch(
+                    `/api/learning-progress/${roadmap}`
+                );
+
+                if (!response.ok) continue;
+
+                const data = await response.json();
+
+                // The endpoint currently returns saved records only.
+                // Exact total topic counts will be supplied by each roadmap
+                // when we connect the individual pages.
+                const records = Array.isArray(data.progress)
+                    ? data.progress
+                    : [];
+
+                const completed = records.filter(
+                    item => item.completed
+                ).length;
+
+                completedTopics += completed;
+
+                const bar = document.getElementById(
+                    progressIds[roadmap]
+                );
+
+                if (bar) {
+                    const savedCount = records.length;
+                    const percentage = savedCount
+                        ? Math.round((completed / savedCount) * 100)
+                        : 0;
+
+                    bar.style.width = percentage + "%";
+                }
+
+                totalTopics += records.length;
+
+            } catch (error) {
+                console.error(
+                    "Could not load progress for " + roadmap,
+                    error
+                );
+            }
+        }
+
+        document.getElementById("completedTopics").textContent =
+            completedTopics;
+
+        // Overall progress based on topics currently saved.
+        const percentage = totalTopics
+            ? Math.round((completedTopics / totalTopics) * 100)
+            : 0;
+
+        document.getElementById("overallPercentage").textContent =
+            percentage + "%";
+
+        document.getElementById("overallProgress").style.width =
+            percentage + "%";
+    }
+
+    loadDashboardProgress();
+</script>
+
+</body>
+</html>

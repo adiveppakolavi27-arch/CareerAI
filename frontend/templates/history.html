@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analysis History | AI Resume Analyzer</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #F5F3FF;
+            color: #202344;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: white;
+            padding: 16px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .brand {
+            color: #6C63FF;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .page-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .history-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .score {
+            font-size: 22px;
+            font-weight: bold;
+            color: #6C63FF;
+        }
+
+        .badge-excellent {
+            background: #D8F8E5;
+            color: #168447;
+        }
+
+        .badge-good {
+            background: #DDEBFF;
+            color: #2463B5;
+        }
+
+        .badge-average {
+            background: #FFF1CC;
+            color: #946200;
+        }
+
+        .badge-needs {
+            background: #FFE0E0;
+            color: #C0392B;
+        }
+
+        .download-btn {
+            background: #6C63FF;
+            color: white;
+            border-radius: 8px;
+            padding: 7px 12px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: #5148DC;
+            color: white;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .table th {
+            color: #555;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+        <div class="container-fluid">
+
+            <a href="/" class="text-decoration-none">
+                <span class="brand">AI Resume Analyzer</span>
+            </a>
+
+            <div>
+                <a href="/upload" class="btn btn-outline-primary me-2">
+                    New Analysis
+                </a>
+
+                <a href="/dashboard" class="btn btn-outline-secondary">
+                    Dashboard
+                </a>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="container py-5">
+
+        <div class="mb-4">
+
+            <h2 class="page-title">
+                Analysis History
+            </h2>
+
+            <p class="text-muted">
+                View your previous resume analyses and download reports.
+            </p>
+
+        </div>
+
+
+        <div class="history-card">
+
+            {% if history %}
+
+                <div class="d-flex justify-content-between mb-4">
+
+                    <h5 class="fw-bold">
+                        Your Previous Analyses
+                    </h5>
+
+                    <span class="badge text-bg-primary">
+                        {{ history|length }} Analyses
+                    </span>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+                                <th>#</th>
+                                <th>Resume</th>
+                                <th>ATS Score</th>
+                                <th>Category</th>
+                                <th>Job Match</th>
+                                <th>Date</th>
+                                <th>Report</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for item in history %}
+
+                            <tr>
+
+                                <td>{{ loop.index }}</td>
+
+                                <td>
+                                    <strong>
+                                        {{ item.filename }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    <span class="score">
+                                        {{ item.ats_score }}/100
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    {% if item.ats_category == "Excellent" %}
+
+                                        <span class="badge badge-excellent">
+                                            Excellent
+                                        </span>
+
+                                    {% elif item.ats_category == "Good" %}
+
+                                        <span class="badge badge-good">
+                                            Good
+                                        </span>
+
+                                    {% elif item.ats_category == "Average" %}
+
+                                        <span class="badge badge-average">
+                                            Average
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge badge-needs">
+                                            {{ item.ats_category }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+                                    {{ item.match_percentage }}%
+                                </td>
+
+                                <td>
+                                    {% if item.created_at %}
+                                        {{ item.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+
+                                <td>
+
+                                    {% if item.report_name %}
+
+                                        <a
+                                            href="{{ url_for('analysis.download_report', report_name=item.report_name) }}"
+                                            class="download-btn"
+                                        >
+                                            Download
+                                        </a>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            Not available
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <h4>No Analysis History Yet</h4>
+
+                    <p class="text-muted">
+                        Upload your first resume to see your analysis history here.
+                    </p>
+
+                    <a href="/upload" class="btn btn-primary">
+                        Analyze Resume
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</body>
+</html>

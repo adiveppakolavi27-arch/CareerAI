@@ -1,0 +1,11 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+python-dotenv
+pdfplumber
+google-genai
+scikit-learn
+spacy
+reportlab
+email-validator
+requests

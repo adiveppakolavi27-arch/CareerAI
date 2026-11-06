@@ -1,0 +1,233 @@
+/* =================================
+   DASHBOARD GLOBAL STYLING
+================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #F5F3FF;
+    color: #202344;
+}
+
+/* =================================
+   NAVBAR
+================================= */
+
+.dashboard-navbar {
+    background: #202344;
+    padding: 15px 0;
+}
+
+.dashboard-navbar .navbar-brand {
+    color: white;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.dashboard-navbar .nav-link {
+    color: #ffffff;
+    margin-left: 15px;
+}
+
+.dashboard-navbar .nav-link:hover {
+    color: #FFE082;
+}
+
+/* =================================
+   DASHBOARD HEADER
+================================= */
+
+.dashboard-header {
+    background: linear-gradient(135deg, #6C63FF, #3498DB);
+    color: white;
+    padding: 40px;
+    border-radius: 18px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.dashboard-header p {
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+/* =================================
+   STATISTICS CARDS
+================================= */
+
+.stats-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 22px;
+    transition: 0.3s;
+    height: 100%;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card h6 {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.stats-card h2 {
+    color: #6C63FF;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.stats-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+/* =================================
+   DASHBOARD CONTENT CARDS
+================================= */
+
+.dashboard-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+.dashboard-card h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #202344;
+}
+
+/* =================================
+   ACTION BUTTONS
+================================= */
+
+.action-btn {
+    display: inline-block;
+    padding: 12px 22px;
+    background: #6C63FF;
+    color: white;
+    text-decoration: none;
+    border-radius: 9px;
+    transition: 0.3s;
+    margin: 5px;
+}
+
+.action-btn:hover {
+    background: #5148df;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-btn.secondary {
+    background: #3498DB;
+}
+
+.action-btn.secondary:hover {
+    background: #247bb5;
+}
+
+/* =================================
+   ANALYSIS HISTORY TABLE
+================================= */
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table th {
+    background: #6C63FF;
+    color: white;
+    padding: 13px;
+    text-align: left;
+}
+
+.history-table td {
+    padding: 13px;
+    border-bottom: 1px solid #eee;
+}
+
+.history-table tr:hover {
+    background: #F5F3FF;
+}
+
+/* =================================
+   SCORE BADGES
+================================= */
+
+.score-badge {
+    background: #E8F8EF;
+    color: #219653;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 35px 15px;
+    color: #777;
+}
+
+/* =================================
+   FOOTER
+================================= */
+
+.dashboard-footer {
+    background: #202344;
+    color: white;
+    text-align: center;
+    padding: 18px;
+    margin-top: 40px;
+}
+
+/* =================================
+   RESPONSIVE DESIGN
+================================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-header {
+        padding: 25px;
+    }
+
+    .dashboard-header h1 {
+        font-size: 24px;
+    }
+
+    .stats-card h2 {
+        font-size: 26px;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+    }
+
+    .history-table {
+        font-size: 13px;
+    }
+
+    .history-table th,
+    .history-table td {
+        padding: 9px;
+    }
+}

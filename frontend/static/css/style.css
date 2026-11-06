@@ -1,0 +1,112 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #F5F3FF;
+    color: #202344;
+}
+
+.navbar {
+    background: #202344;
+    padding: 18px 0;
+}
+
+.navbar-brand {
+    font-size: 24px;
+}
+
+.hero {
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6C63FF, #3498DB);
+    color: white;
+    padding: 80px 20px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #FFE082;
+}
+
+.hero p {
+    font-size: 18px;
+    max-width: 750px;
+    margin: 0 auto 30px;
+    line-height: 1.7;
+}
+
+.btn-primary {
+    background: #FF6B9D;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #e94d83;
+}
+
+.section-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.feature-card {
+    background: white;
+    padding: 30px;
+    min-height: 190px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+    transition: 0.3s;
+}
+
+.feature-card:hover {
+    transform: translateY(-7px);
+}
+
+.feature-card h3 {
+    font-size: 21px;
+    margin-bottom: 15px;
+}
+
+.feature-card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.about-section {
+    background: white;
+}
+
+.about-section p {
+    max-width: 800px;
+    margin: 20px auto 0;
+    line-height: 1.8;
+}
+
+footer {
+    background: #202344;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 32px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+}
