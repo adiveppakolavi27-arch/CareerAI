@@ -1,6 +1,13 @@
 import os
 
-from flask import Flask, render_template, jsonify, request
+from flask import (
+    Flask,
+    render_template,
+    jsonify,
+    request,
+    send_from_directory
+)
+
 from dotenv import load_dotenv
 from flask_login import LoginManager, login_required, current_user
 
@@ -320,16 +327,12 @@ def save_learning_progress():
     topic = data.get("topic")
     completed = data.get("completed")
 
-    # Validate roadmap
-
     if not isinstance(roadmap, str) or not roadmap.strip():
 
         return jsonify({
             "success": False,
             "message": "Roadmap name is required."
         }), 400
-
-    # Validate topic
 
     if not isinstance(topic, str) or not topic.strip():
 
@@ -338,16 +341,12 @@ def save_learning_progress():
             "message": "Topic name is required."
         }), 400
 
-    # Validate length
-
     if len(roadmap) > 100 or len(topic) > 255:
 
         return jsonify({
             "success": False,
             "message": "Roadmap or topic name is too long."
         }), 400
-
-    # Validate completed value
 
     if not isinstance(completed, bool):
 
@@ -480,6 +479,24 @@ def get_learning_progress(roadmap):
             "success": False,
             "message": "Unable to retrieve learning progress."
         }), 500
+
+
+# =========================================
+# CAREERAI SERVICE WORKER
+# =========================================
+
+@app.route("/sw.js")
+def service_worker():
+
+    response = send_from_directory(
+        app.static_folder,
+        "sw.js",
+        mimetype="application/javascript"
+    )
+
+    response.headers["Service-Worker-Allowed"] = "/"
+
+    return response
 
 
 # =========================================
