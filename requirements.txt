@@ -9,3 +9,4 @@ spacy
 reportlab
 email-validator
 requests
+gunicorn
