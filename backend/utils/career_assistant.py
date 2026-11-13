@@ -1,9 +1,18 @@
 import os
-import time
+import re
 import logging
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from google import genai
+from google.genai import types
 from dotenv import load_dotenv
+
+
+# =========================================
+# 1. INITIALIZATION
+# =========================================
 
 load_dotenv()
 
@@ -11,164 +20,239 @@ logger = logging.getLogger(__name__)
 
 
 # =========================================
-# CONFIGURATION
+# 2. CONFIGURATION
 # =========================================
 
 DEFAULT_MODEL = "gemini-3.6-flash"
 
-MAX_QUESTION_LENGTH = 3000
-MAX_RESUME_CONTEXT_LENGTH = 8000
+TIMEZONE = "Asia/Kolkata"
 
-MAX_RETRIES = 3
+MAX_QUESTION_LENGTH = 3000
+MAX_RESUME_CONTEXT_LENGTH = 4000
+
+MAX_HISTORY_MESSAGES = 8
+MAX_HISTORY_MESSAGE_LENGTH = 1500
+
+MAX_OUTPUT_TOKENS = 1024
+REQUEST_TIMEOUT_MS = 45000
 
 
 # =========================================
-# CAREER ASSISTANT SYSTEM INSTRUCTIONS
+# 3. CURRENT DATE AND TIME
+# =========================================
+
+def get_current_datetime():
+
+    now = datetime.now(ZoneInfo(TIMEZONE))
+
+    return {
+        "date": now.strftime("%A, %d %B %Y"),
+        "time": now.strftime("%I:%M %p"),
+        "day": now.strftime("%A"),
+        "timezone": TIMEZONE
+    }
+
+
+# =========================================
+# 4. DIRECT DATE AND TIME ANSWERS
+# =========================================
+
+def get_direct_datetime_answer(question):
+
+    question = question.lower().strip()
+
+    question = re.sub(r"[?!.,]+$", "", question)
+
+    question = question.replace("what's", "what is")
+    question = question.replace("today's", "todays")
+
+    current = get_current_datetime()
+
+    date_patterns = [
+        r"what is the date today",
+        r"what is todays date",
+        r"todays date",
+        r"what date is it today",
+        r"what date is today",
+        r"what is the date",
+        r"tell me todays date",
+        r"tell me the date today",
+        r"can you tell me todays date",
+        r"give me todays date"
+    ]
+
+    for pattern in date_patterns:
+
+        if re.fullmatch(pattern, question):
+
+            return f"Today's date is {current['date']}."
+
+    day_patterns = [
+        r"what day is today",
+        r"what day is it today",
+        r"which day is today",
+        r"what is today",
+        r"tell me todays day"
+    ]
+
+    for pattern in day_patterns:
+
+        if re.fullmatch(pattern, question):
+
+            return f"Today is {current['day']}."
+
+    time_patterns = [
+        r"what time is it",
+        r"what time is it now",
+        r"what is the current time",
+        r"current time",
+        r"tell me the time",
+        r"what is the time",
+        r"what time is now"
+    ]
+
+    for pattern in time_patterns:
+
+        if re.fullmatch(pattern, question):
+
+            return (
+                f"The current time is {current['time']} "
+                f"({current['timezone']})."
+            )
+
+    return None
+
+
+# =========================================
+# 5. SYSTEM INSTRUCTIONS
 # =========================================
 
 SYSTEM_INSTRUCTIONS = """
-You are CareerAI, an intelligent AI career guidance assistant.
+You are CareerAI, an intelligent general-purpose AI assistant.
 
-Your purpose is to help students and job seekers build
-technical skills, understand career opportunities,
-prepare for placements and develop professional skills.
+You help users with:
 
-YOUR MAIN RESPONSIBILITIES:
+GENERAL KNOWLEDGE:
+Science, mathematics, technology, history, geography,
+education, business and everyday questions.
 
-1. PYTHON DEVELOPMENT
-   - Python fundamentals
-   - Intermediate Python
-   - Advanced Python
-   - Python projects
-   - Libraries and frameworks
+PROGRAMMING:
+Python, Java, C, C++, JavaScript, HTML, CSS, SQL,
+Flask, Django, React, APIs and databases.
 
-2. ARTIFICIAL INTELLIGENCE
-   - AI fundamentals
-   - AI applications
-   - Natural Language Processing
-   - Generative AI
-   - AI projects
+ARTIFICIAL INTELLIGENCE:
+AI, Machine Learning, Deep Learning, Data Science
+and Generative AI.
 
-3. MACHINE LEARNING
-   - Supervised learning
-   - Unsupervised learning
-   - Model training
-   - Model evaluation
-   - Machine learning projects
+EDUCATION:
+Explain concepts step by step using simple examples.
+Do not assume the user has advanced knowledge.
 
-4. DATA SCIENCE
-   - Python for data science
-   - NumPy and Pandas
-   - Data visualization
-   - Statistics
-   - SQL
+WRITING:
+Help with emails, reports, essays, grammar,
+summaries, translations and professional communication.
 
-5. WEB DEVELOPMENT
-   - HTML
-   - CSS
-   - JavaScript
-   - Flask
-   - APIs
-   - Database integration
+CAREER:
+Help with career opportunities, learning roadmaps,
+interviews, job preparation and professional skills.
 
-6. PLACEMENT PREPARATION
-   - Technical interview preparation
-   - Python interview questions
-   - SQL interview questions
-   - Communication skills
-   - Resume improvement
+RESUME:
+When resume information is provided, analyze skills,
+suggest improvements and explain ATS scores.
+Never invent qualifications or experience.
 
-7. PROJECT GUIDANCE
-   - Beginner projects
-   - Intermediate projects
-   - Advanced projects
-   - Final-year projects
-   - Project development steps
+IDENTITY:
+- Your name is CareerAI.
+- Never claim to be ChatGPT.
+- Be transparent about your capabilities.
 
-ANSWERING GUIDELINES:
+CONVERSATION:
+- Understand follow-up questions.
+- Understand spelling mistakes and imperfect English.
+- Use previous conversation when relevant.
+- Avoid repeating information unnecessarily.
+- Follow the user's current topic.
 
-1. Explain concepts in beginner-friendly language.
-2. Use step-by-step explanations when appropriate.
-3. Give practical examples.
-4. Recommend useful skills and learning resources.
-5. Suggest realistic projects.
-6. Explain technical concepts clearly.
-7. Do not invent qualifications or experience.
-8. Never guarantee jobs, salaries or placement results.
-9. Distinguish facts from recommendations.
-10. If information is missing, ask for clarification.
-11. Keep answers organized with headings and bullet points.
-12. Do not pretend to have accessed information that
-    you have not actually accessed.
+CURRENT DATE:
+Use the date and time provided with the request.
+Timezone: Asia/Kolkata.
 
-Your goal is to help users learn, improve and plan
-their careers through practical guidance.
+LIVE INFORMATION:
+You do not automatically have internet access.
+Never pretend to browse websites.
+Never invent current prices, news, statistics or results.
+
+RESPONSE STYLE:
+- Answer the actual question first.
+- Keep simple answers short.
+- Explain difficult topics clearly.
+- Use Markdown for longer answers.
+- Use code blocks for programming.
+- Give complete code when requested.
+- Avoid unnecessary introductions.
+
+You are a general-purpose AI assistant
+and a dedicated career expert.
 """
 
 
 # =========================================
-# TEMPORARY ERROR DETECTION
+# 6. CLEAN CONVERSATION HISTORY
 # =========================================
 
-def is_temporary_error(error):
+def clean_history(conversation_history):
 
-    error_message = str(error).upper()
+    if not isinstance(conversation_history, list):
+        return []
 
-    temporary_keywords = [
+    cleaned = []
 
-        "429",
-        "500",
-        "502",
-        "503",
-        "504",
-        "UNAVAILABLE",
-        "RESOURCE_EXHAUSTED",
-        "INTERNAL",
-        "TIMEOUT",
-        "CONNECTION"
+    for message in conversation_history[-MAX_HISTORY_MESSAGES:]:
 
-    ]
+        if not isinstance(message, dict):
+            continue
 
-    return any(
-        keyword in error_message
-        for keyword in temporary_keywords
-    )
+        role = message.get("role")
+        content = message.get("content")
+
+        if role not in ("user", "model"):
+            continue
+
+        if not isinstance(content, str):
+            continue
+
+        content = content.strip()
+
+        if not content:
+            continue
+
+        content = content[:MAX_HISTORY_MESSAGE_LENGTH]
+
+        cleaned.append({
+            "role": role,
+            "parts": [{"text": content}]
+        })
+
+    return cleaned
 
 
 # =========================================
-# MAIN CAREER ASSISTANT FUNCTION
+# 7. MAIN CAREERAI ASSISTANT
 # =========================================
 
-def ask_career_assistant(question, resume_text=""):
+def ask_career_assistant(
+    question,
+    resume_text="",
+    conversation_history=None
+):
 
-    # -------------------------------------
-    # CHECK API KEY
-    # -------------------------------------
-
-    api_key = os.getenv("GEMINI_API_KEY")
-
-    if not api_key or api_key == "your_api_key_here":
-
-        return {
-
-            "success": False,
-
-            "error": "Gemini API key is not configured."
-
-        }
-
-    # -------------------------------------
-    # VALIDATE QUESTION
-    # -------------------------------------
+    # Validate question
 
     if not isinstance(question, str):
 
         return {
-
             "success": False,
-
             "error": "Invalid question format."
-
         }
 
     question = question.strip()
@@ -176,29 +260,44 @@ def ask_career_assistant(question, resume_text=""):
     if not question:
 
         return {
-
             "success": False,
-
             "error": "Please enter your question."
-
         }
 
     if len(question) > MAX_QUESTION_LENGTH:
 
         return {
-
             "success": False,
-
-            "error": "Your question exceeds the 3000 character limit."
-
+            "error": "Your question exceeds the character limit."
         }
 
-    # -------------------------------------
-    # VALIDATE RESUME CONTEXT
-    # -------------------------------------
+    # Direct date/time answers
+
+    direct_answer = get_direct_datetime_answer(question)
+
+    if direct_answer:
+
+        return {
+            "success": True,
+            "answer": direct_answer
+        }
+
+    # Check API key
+
+    api_key = os.getenv("GEMINI_API_KEY", "").strip()
+
+    if not api_key:
+
+        logger.error("Gemini API key is missing.")
+
+        return {
+            "success": False,
+            "error": "Gemini API key is not configured."
+        }
+
+    # Resume context
 
     if not isinstance(resume_text, str):
-
         resume_text = ""
 
     resume_text = resume_text[:MAX_RESUME_CONTEXT_LENGTH]
@@ -207,174 +306,138 @@ def ask_career_assistant(question, resume_text=""):
 
         resume_text = "No resume information is available."
 
-    # -------------------------------------
-    # GET MODEL CONFIGURATION
-    # -------------------------------------
+    # Date and time
+
+    current = get_current_datetime()
+
+    date_context = f"""
+Current date: {current['date']}
+Current time: {current['time']}
+Timezone: {current['timezone']}
+"""
+
+    # Model
 
     model_name = os.getenv(
         "GEMINI_MODEL",
         DEFAULT_MODEL
-    )
+    ).strip()
 
-    # -------------------------------------
-    # CREATE PROMPT
-    # -------------------------------------
+    if not model_name:
+        model_name = DEFAULT_MODEL
 
-    prompt = f"""
-{SYSTEM_INSTRUCTIONS}
+    # Conversation history
 
-=========================================
-USER RESUME INFORMATION
-=========================================
+    history = clean_history(conversation_history)
+
+    # Current message
+
+    current_message = f"""
+{date_context}
+
+USER RESUME INFORMATION:
 
 {resume_text}
 
-=========================================
-USER QUESTION
-=========================================
+CURRENT QUESTION:
 
 {question}
 
-=========================================
-RESPONSE REQUIREMENTS
-=========================================
+Answer the current question directly.
 
-Provide a useful and accurate answer.
+Use previous conversation only when relevant.
 
-When explaining technical topics:
+Do not unnecessarily discuss the resume.
 
-- Start with a simple explanation.
-- Explain important concepts.
-- Give practical examples.
-- Include code examples when requested.
-- Explain the code step by step when useful.
-
-When creating learning roadmaps:
-
-- Divide learning into phases.
-- Include beginner, intermediate and advanced topics.
-- Suggest practical exercises.
-- Recommend projects.
-- Explain what to learn next.
-
-When providing career recommendations:
-
-- Consider the available resume information.
-- Identify relevant skills.
-- Suggest possible improvements.
-- Avoid unsupported assumptions.
-
-Keep the answer clear, organized and practical.
+Keep simple answers concise.
 """
 
-    # -------------------------------------
-    # INITIALIZE GEMINI CLIENT
-    # -------------------------------------
+    contents = history + [
+        {
+            "role": "user",
+            "parts": [
+                {"text": current_message}
+            ]
+        }
+    ]
+
+    # Initialize Gemini with a timeout
 
     try:
 
         client = genai.Client(
-            api_key=api_key
+            api_key=api_key,
+            http_options=types.HttpOptions(
+                timeout=REQUEST_TIMEOUT_MS,
+                retry_options=types.HttpRetryOptions(
+                    attempts=1
+                )
+            )
         )
 
     except Exception:
 
+        logger.exception("Gemini initialization failed.")
+
+        return {
+            "success": False,
+            "error": "Unable to initialize the AI service."
+        }
+
+    # Generate response
+
+    try:
+
+        logger.info("CareerAI request started.")
+
+        response = client.models.generate_content(
+
+            model=model_name,
+
+            contents=contents,
+
+            config=types.GenerateContentConfig(
+
+                system_instruction=SYSTEM_INSTRUCTIONS,
+
+                temperature=0.5,
+
+                max_output_tokens=MAX_OUTPUT_TOKENS,
+
+                automatic_continuation=False
+
+            )
+        )
+
+        answer = getattr(response, "text", None)
+
+        if not isinstance(answer, str) or not answer.strip():
+
+            logger.error("Gemini returned an empty response.")
+
+            return {
+                "success": False,
+                "error": "Gemini returned an empty response. Please try again."
+            }
+
+        logger.info("CareerAI response generated successfully.")
+
+        return {
+            "success": True,
+            "answer": answer.strip()
+        }
+
+    except Exception as error:
+
         logger.exception(
-            "Gemini client initialization failed."
+            "CareerAI Gemini request failed: %s",
+            type(error).__name__
         )
 
         return {
-
             "success": False,
-
-            "error": "Unable to initialize the AI service."
-
+            "error": (
+                "CareerAI could not generate an answer. "
+                "Please try again."
+            )
         }
-
-    # -------------------------------------
-    # GENERATE AI RESPONSE
-    # -------------------------------------
-
-    for attempt in range(MAX_RETRIES):
-
-        try:
-
-            response = client.models.generate_content(
-
-                model=model_name,
-
-                contents=prompt
-
-            )
-
-            if response is None:
-
-                return {
-
-                    "success": False,
-
-                    "error": "Gemini returned no response."
-
-                }
-
-            answer = response.text
-
-            if not answer or not answer.strip():
-
-                return {
-
-                    "success": False,
-
-                    "error": "Gemini returned an empty response."
-
-                }
-
-            return {
-
-                "success": True,
-
-                "answer": answer.strip()
-
-            }
-
-        except Exception as error:
-
-            logger.warning(
-                "Gemini request failed on attempt %s: %s",
-                attempt + 1,
-                type(error).__name__
-            )
-
-            if (
-                is_temporary_error(error)
-                and attempt < MAX_RETRIES - 1
-            ):
-
-                wait_time = 2 ** (attempt + 1)
-
-                time.sleep(wait_time)
-
-                continue
-
-            logger.exception(
-                "Career Assistant API request failed."
-            )
-
-            return {
-
-                "success": False,
-
-                "error": (
-                    "Career Assistant is temporarily unavailable. "
-                    "Please try again later."
-                )
-
-            }
-
-    return {
-
-        "success": False,
-
-        "error": "Unable to generate a response."
-
-    }

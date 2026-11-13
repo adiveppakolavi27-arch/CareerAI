@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>AI Career Assistant | CareerAI</title>
@@ -15,7 +13,6 @@
     >
 
     <style>
-
         body {
             background: #F5F3FF;
             color: #202344;
@@ -49,12 +46,7 @@
         }
 
         .assistant-header {
-            background: linear-gradient(
-                135deg,
-                #6C63FF,
-                #5148D9
-            );
-
+            background: linear-gradient(135deg, #6C63FF, #5148D9);
             color: white;
             padding: 25px;
         }
@@ -64,6 +56,7 @@
             overflow-y: auto;
             padding: 25px;
             background: #FAFAFF;
+            scroll-behavior: smooth;
         }
 
         .message {
@@ -72,7 +65,6 @@
             margin-bottom: 18px;
             max-width: 85%;
             line-height: 1.6;
-            white-space: pre-wrap;
             overflow-wrap: anywhere;
         }
 
@@ -80,12 +72,144 @@
             background: #6C63FF;
             color: white;
             margin-left: auto;
+            white-space: pre-wrap;
         }
 
         .ai-message {
             background: #ECEAFF;
             color: #202344;
             margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .ai-message h1,
+        .ai-message h2,
+        .ai-message h3,
+        .ai-message h4,
+        .ai-message h5,
+        .ai-message h6 {
+            color: #5148D9;
+            font-weight: 700;
+            margin-top: 18px;
+            margin-bottom: 10px;
+        }
+
+        .ai-message p {
+            margin-bottom: 12px;
+        }
+
+        .ai-message ul,
+        .ai-message ol {
+            padding-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        .ai-message li {
+            margin-bottom: 6px;
+        }
+
+        .ai-message pre {
+            background: #202344;
+            color: white;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        .ai-message pre code {
+            color: white;
+            background: transparent;
+            padding: 0;
+        }
+
+        .ai-message code {
+            background: #dedbff;
+            color: #5148D9;
+            padding: 3px 6px;
+            border-radius: 5px;
+        }
+
+        .ai-message blockquote {
+            border-left: 4px solid #6C63FF;
+            padding-left: 12px;
+            color: #555;
+            margin: 12px 0;
+        }
+
+        .ai-message table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+
+        .ai-message th,
+        .ai-message td {
+            border: 1px solid #d8d3ff;
+            padding: 8px;
+        }
+
+        .ai-message th {
+            background: #dedbff;
+            color: #5148D9;
+        }
+
+        /* CAREERAI THINKING INDICATOR */
+
+        .typing-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+            max-width: 85%;
+            padding: 13px 17px;
+            margin-bottom: 18px;
+            border-radius: 14px;
+            background: #ECEAFF;
+            color: #5148D9;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .typing-dots {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #6C63FF;
+            animation: typingBounce 1.2s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.45;
+            }
+
+            30% {
+                transform: translateY(-5px);
+                opacity: 1;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .typing-dots span {
+                animation: none;
+            }
         }
 
         .suggestion-container {
@@ -140,12 +264,6 @@
             cursor: not-allowed;
         }
 
-        .typing {
-            color: #777;
-            font-style: italic;
-            margin-bottom: 15px;
-        }
-
         .section-title {
             font-weight: bold;
             color: #202344;
@@ -157,7 +275,6 @@
         }
 
         @media (max-width: 576px) {
-
             .main-container {
                 margin: 15px auto;
             }
@@ -171,25 +288,27 @@
                 max-width: 95%;
             }
 
+            .typing-message {
+                max-width: 95%;
+            }
+
             .navbar .btn {
                 font-size: 12px;
                 padding: 6px 9px;
             }
-
         }
-
     </style>
+
+    <!-- Markdown formatting and HTML sanitization -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
 
 </head>
 
-
 <body>
 
-
     <!-- NAVBAR -->
-
     <nav class="navbar">
-
         <div class="container">
 
             <a href="/" class="navbar-brand">
@@ -197,7 +316,6 @@
             </a>
 
             <div class="ms-auto">
-
                 <a href="/dashboard" class="btn btn-light me-2">
                     Dashboard
                 </a>
@@ -209,45 +327,30 @@
                 <a href="/applications" class="btn btn-light">
                     Applications
                 </a>
-
             </div>
 
         </div>
-
     </nav>
 
-
-
     <!-- MAIN CONTENT -->
-
     <div class="container main-container">
 
         <div class="assistant-card">
 
-
             <!-- HEADER -->
-
             <div class="assistant-header">
-
                 <h2>🤖 AI Career Assistant</h2>
 
                 <p class="mb-0">
-
                     Ask questions about careers, skills, interviews
                     and professional development.
-
                 </p>
-
             </div>
 
-
-
             <!-- CHAT AREA -->
-
             <div class="chat-area" id="chatArea">
 
                 <div class="message ai-message">
-
                     Hello! Welcome to CareerAI.
 
                     I'm your AI Career Assistant.
@@ -257,23 +360,17 @@
                     and learning roadmaps.
 
                     How can I help you today?
-
                 </div>
 
             </div>
 
-
-
             <!-- SUGGESTED QUESTIONS -->
-
             <div class="px-4 pt-3">
 
                 <div class="d-flex justify-content-between align-items-center">
 
                     <h6 class="section-title mb-0">
-
                         Suggested Questions
-
                     </h6>
 
                     <button
@@ -281,105 +378,73 @@
                         class="btn btn-outline-danger btn-sm clear-btn"
                         id="clearChatButton"
                     >
-
                         🗑️ Clear Chat
-
                     </button>
 
                 </div>
 
-
                 <div class="suggestion-container">
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('Analyze my resume and suggest improvements.')"
                     >
-
                         📄 Resume Improvement
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('Give me a complete Python learning roadmap from beginner to advanced.')"
                     >
-
                         🐍 Python Roadmap
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('What skills should I learn to become an AI and Machine Learning engineer?')"
                     >
-
                         🤖 AI & ML Skills
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('Prepare me for a technical interview with questions and answers.')"
                     >
-
                         💼 Interview Preparation
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('Suggest five practical projects to improve my programming skills.')"
                     >
-
                         💡 Project Ideas
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('Give me a complete SQL learning roadmap with practice exercises.')"
                     >
-
                         🗄️ SQL Roadmap
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('How can I improve my communication and professional skills?')"
                     >
-
                         🗣️ Communication Skills
-
                     </button>
-
 
                     <button
                         class="suggestion-btn"
                         onclick="askSuggestion('Create a practical roadmap to become job-ready as a software developer.')"
                     >
-
                         🚀 Job Readiness
-
                     </button>
 
-
                 </div>
-
             </div>
 
-
-
             <!-- INPUT AREA -->
-
             <div class="input-area">
 
                 <form id="chatForm">
@@ -390,7 +455,7 @@
                             type="text"
                             id="questionInput"
                             class="form-control question-input"
-                            placeholder="Ask your career question..."
+                            placeholder="Ask your question..."
                             maxlength="3000"
                             autocomplete="off"
                             required
@@ -402,156 +467,158 @@
                             class="send-btn ms-2"
                             disabled
                         >
-
                             Send ➤
-
                         </button>
 
                     </div>
 
                 </form>
 
-
                 <div class="text-muted small mt-2">
-
                     AI responses can contain mistakes.
-                    Verify important career information.
-
+                    Verify important information.
                 </div>
 
             </div>
 
-
         </div>
-
     </div>
 
-
-
     <!-- JAVASCRIPT -->
-
     <script>
 
-
         // ELEMENTS
-
         const chatForm = document.getElementById("chatForm");
-
         const questionInput = document.getElementById("questionInput");
-
         const chatArea = document.getElementById("chatArea");
-
         const sendButton = document.getElementById("sendButton");
-
         const clearChatButton = document.getElementById("clearChatButton");
 
-
         let isSending = false;
-
         let historyLoaded = false;
 
 
-
         // ADD MESSAGE
-
         function addMessage(text, sender) {
 
             const message = document.createElement("div");
-
             message.classList.add("message");
 
             if (sender === "user") {
 
                 message.classList.add("user-message");
+                message.textContent = text;
 
             } else {
 
                 message.classList.add("ai-message");
 
+                if (
+                    typeof marked !== "undefined" &&
+                    typeof DOMPurify !== "undefined"
+                ) {
+
+                    const formattedHTML = marked.parse(text || "");
+
+                    message.innerHTML =
+                        DOMPurify.sanitize(formattedHTML);
+
+                } else {
+
+                    message.textContent = text || "";
+                }
             }
 
-            message.textContent = text;
-
             chatArea.appendChild(message);
-
             chatArea.scrollTop = chatArea.scrollHeight;
-
         }
 
 
-
         // WELCOME MESSAGE
-
         function showWelcomeMessage() {
 
             chatArea.innerHTML = "";
 
             addMessage(
-                "Hello! Welcome to CareerAI. I'm your AI Career Assistant. Ask me about programming, AI/ML, interviews, resumes and career development.",
+                "Hello! Welcome to CareerAI. I'm your AI Assistant. Ask me about programming, AI/ML, interviews, resumes and career development.",
                 "ai"
             );
-
         }
 
 
-
-        // SHOW TYPING ANIMATION
-
+        // SHOW THINKING INDICATOR
         function showTyping() {
+
+            removeTyping();
 
             const typing = document.createElement("div");
 
             typing.id = "typingMessage";
+            typing.className = "typing-message";
 
-            typing.className = "typing";
+            typing.setAttribute("role", "status");
+            typing.setAttribute("aria-live", "polite");
 
-            typing.textContent = "CareerAI is thinking...";
+            const label = document.createElement("span");
 
+            label.textContent = "CareerAI is thinking";
+
+            const dots = document.createElement("span");
+
+            dots.className = "typing-dots";
+            dots.setAttribute("aria-hidden", "true");
+
+            for (let i = 0; i < 3; i++) {
+
+                const dot = document.createElement("span");
+
+                dots.appendChild(dot);
+            }
+
+            typing.appendChild(label);
+            typing.appendChild(dots);
+
+            // Display immediately after the user's question.
             chatArea.appendChild(typing);
 
             chatArea.scrollTop = chatArea.scrollHeight;
-
         }
 
 
-
-        // REMOVE TYPING ANIMATION
-
+        // REMOVE THINKING INDICATOR
         function removeTyping() {
 
-            const typing = document.getElementById("typingMessage");
+            const typing =
+                document.getElementById("typingMessage");
 
             if (typing) {
-
                 typing.remove();
-
             }
-
         }
-
 
 
         // UPDATE BUTTON STATE
-
         function updateButtonState() {
 
-            const hasQuestion = questionInput.value.trim().length > 0;
+            const hasQuestion =
+                questionInput.value.trim().length > 0;
 
-            sendButton.disabled = !historyLoaded || isSending || !hasQuestion;
-
+            sendButton.disabled =
+                !historyLoaded || isSending || !hasQuestion;
         }
 
 
-
         // LOAD CHAT HISTORY
-
         async function loadChatHistory() {
 
             try {
 
                 const response = await fetch("/career-history");
 
-                if (response.redirected || response.status === 401) {
+                if (
+                    response.redirected ||
+                    response.status === 401
+                ) {
 
                     showWelcomeMessage();
 
@@ -561,7 +628,6 @@
                     );
 
                     return;
-
                 }
 
                 const result = await response.json();
@@ -571,7 +637,6 @@
                     throw new Error(
                         result.error || "Unable to load chat history."
                     );
-
                 }
 
                 chatArea.innerHTML = "";
@@ -587,13 +652,9 @@
                         addMessage(chat.question, "user");
 
                         if (chat.answer) {
-
                             addMessage(chat.answer, "ai");
-
                         }
-
                     });
-
                 }
 
             } catch (error) {
@@ -603,7 +664,7 @@
                 showWelcomeMessage();
 
                 addMessage(
-                    "Unable to load saved conversations. You can still try again after checking your connection.",
+                    "Unable to load saved conversations. Please check your connection.",
                     "ai"
                 );
 
@@ -612,37 +673,36 @@
                 historyLoaded = true;
 
                 updateButtonState();
-
             }
-
         }
 
 
-
         // SEND QUESTION TO FLASK API
-
         async function sendQuestion(question) {
 
             question = question.trim();
 
-            if (!question || isSending || !historyLoaded) {
-
+            if (
+                !question ||
+                isSending ||
+                !historyLoaded
+            ) {
                 return;
-
             }
 
             isSending = true;
 
             updateButtonState();
 
+            // First display the user's question.
             addMessage(question, "user");
 
             questionInput.value = "";
 
             sendButton.textContent = "Thinking...";
 
+            // Immediately display CareerAI thinking.
             showTyping();
-
 
             try {
 
@@ -651,24 +711,21 @@
                     method: "POST",
 
                     headers: {
-
                         "Content-Type": "application/json"
-
                     },
 
                     body: JSON.stringify({
-
                         question: question
-
                     })
-
                 });
 
 
-                removeTyping();
+                if (
+                    response.redirected ||
+                    response.status === 401
+                ) {
 
-
-                if (response.redirected || response.status === 401) {
+                    removeTyping();
 
                     addMessage(
                         "Your login session may have expired. Please log in again.",
@@ -676,11 +733,13 @@
                     );
 
                     return;
-
                 }
 
 
                 const result = await response.json();
+
+                // Remove thinking only when the response is ready.
+                removeTyping();
 
 
                 if (response.ok && result.success) {
@@ -693,7 +752,6 @@
                         result.error || "Unable to get an answer. Please try again.",
                         "ai"
                     );
-
                 }
 
 
@@ -706,8 +764,10 @@
                     "ai"
                 );
 
-                console.error("Career Assistant Error:", error);
-
+                console.error(
+                    "Career Assistant Error:",
+                    error
+                );
 
             } finally {
 
@@ -720,41 +780,34 @@
                 updateButtonState();
 
                 questionInput.focus();
-
             }
-
         }
 
 
-
         // FORM SUBMISSION
-
         chatForm.addEventListener("submit", function(event) {
 
             event.preventDefault();
 
-            const question = questionInput.value.trim();
+            const question =
+                questionInput.value.trim();
 
             sendQuestion(question);
-
         });
 
 
-
         // INPUT CHANGE
-
-        questionInput.addEventListener("input", updateButtonState);
-
+        questionInput.addEventListener(
+            "input",
+            updateButtonState
+        );
 
 
         // SUGGESTED QUESTIONS
-
         function askSuggestion(question) {
 
             if (isSending || !historyLoaded) {
-
                 return;
-
             }
 
             questionInput.value = question;
@@ -762,19 +815,14 @@
             updateButtonState();
 
             sendQuestion(question);
-
         }
 
 
-
         // CLEAR CHAT HISTORY
-
         async function clearChat() {
 
             if (isSending || !historyLoaded) {
-
                 return;
-
             }
 
             const confirmed = confirm(
@@ -782,51 +830,52 @@
             );
 
             if (!confirmed) {
-
                 return;
-
             }
 
             clearChatButton.disabled = true;
 
             clearChatButton.textContent = "Clearing...";
 
-
             try {
 
-                const response = await fetch("/clear-career-history", {
+                const response = await fetch(
+                    "/clear-career-history",
+                    {
+                        method: "POST"
+                    }
+                );
 
-                    method: "POST"
 
-                });
+                if (
+                    response.redirected ||
+                    response.status === 401
+                ) {
 
-
-                if (response.redirected || response.status === 401) {
-
-                    alert("Your login session may have expired. Please log in again.");
+                    alert(
+                        "Your login session may have expired. Please log in again."
+                    );
 
                     return;
-
                 }
 
 
                 const result = await response.json();
 
-
                 if (response.ok && result.success) {
 
                     showWelcomeMessage();
 
-                    alert("Your conversation history has been cleared successfully.");
+                    alert(
+                        "Your conversation history has been cleared successfully."
+                    );
 
                 } else {
 
                     alert(
                         result.error || "Unable to clear conversation history."
                     );
-
                 }
-
 
             } catch (error) {
 
@@ -834,33 +883,26 @@
 
                 alert("Connection error. Please try again.");
 
-
             } finally {
 
                 clearChatButton.disabled = false;
 
                 clearChatButton.textContent = "🗑️ Clear Chat";
-
             }
-
         }
 
 
-
         // CLEAR CHAT BUTTON EVENT
-
-        clearChatButton.addEventListener("click", clearChat);
-
+        clearChatButton.addEventListener(
+            "click",
+            clearChat
+        );
 
 
         // LOAD HISTORY WHEN PAGE OPENS
-
         loadChatHistory();
-
 
     </script>
 
-
 </body>
-
 </html>

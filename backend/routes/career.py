@@ -13,15 +13,14 @@ from flask_login import login_required, current_user
 from database.database import db
 
 from backend.utils.career_assistant import ask_career_assistant
+
 from backend.models.analysis_history import AnalysisHistory
 from backend.models.chat_history import ChatHistory
 
 
-# =========================================
-# CAREER BLUEPRINT
-# =========================================
-
 career_bp = Blueprint("career", __name__)
+
+MAX_HISTORY_MESSAGES = 4
 
 
 # =========================================
@@ -45,15 +44,11 @@ def career_history():
 
     try:
 
-        # Get the latest 50 conversations.
-
         history = ChatHistory.query.filter_by(
             user_id=current_user.id
         ).order_by(
             ChatHistory.created_at.desc()
         ).limit(50).all()
-
-        # Display conversations in chronological order.
 
         history.reverse()
 
@@ -77,11 +72,8 @@ def career_history():
             })
 
         return jsonify({
-
             "success": True,
-
             "history": conversations
-
         }), 200
 
     except Exception:
@@ -93,11 +85,8 @@ def career_history():
         )
 
         return jsonify({
-
             "success": False,
-
             "error": "Unable to load conversation history."
-
         }), 500
 
 
@@ -115,16 +104,11 @@ def get_resume_context():
 
     if not latest_analysis:
 
-        return """
-The user has not analysed a resume yet.
-
-Provide general career guidance.
-
-Do not assume the user's qualifications,
-skills, education or work experience.
-"""
-
-    # Extract skills safely.
+        return (
+            "The user has not analysed a resume yet. "
+            "Provide general guidance without assuming "
+            "qualifications or experience."
+        )
 
     try:
 
@@ -155,9 +139,11 @@ skills, education or work experience.
 
     ats_score = latest_analysis.ats_score or 0
 
-    ats_category = latest_analysis.ats_category or "Not available"
+    ats_category = (
+        latest_analysis.ats_category or "Not available"
+    )
 
-    resume_context = f"""
+    return f"""
 USER RESUME INFORMATION
 
 Extracted Skills:
@@ -169,19 +155,44 @@ Latest ATS Score:
 ATS Category:
 {ats_category}
 
-INSTRUCTIONS:
-
-1. Use the resume information to personalize guidance.
-2. Recommend relevant technical skills.
-3. Suggest suitable projects.
-4. Identify possible learning gaps.
-5. Provide practical placement preparation advice.
-6. Never invent qualifications or experience.
-7. Clearly distinguish known information from suggestions.
-8. If information is missing, ask the user.
+Use this information only when relevant.
+Never invent qualifications or experience.
 """
 
-    return resume_context
+
+# =========================================
+# BUILD CONVERSATION HISTORY
+# =========================================
+
+def get_conversation_history():
+
+    chats = ChatHistory.query.filter_by(
+        user_id=current_user.id
+    ).order_by(
+        ChatHistory.created_at.desc()
+    ).limit(MAX_HISTORY_MESSAGES).all()
+
+    chats.reverse()
+
+    conversation = []
+
+    for chat in chats:
+
+        if chat.message:
+
+            conversation.append({
+                "role": "user",
+                "content": chat.message
+            })
+
+        if chat.response:
+
+            conversation.append({
+                "role": "model",
+                "content": chat.response
+            })
+
+    return conversation
 
 
 # =========================================
@@ -197,36 +208,22 @@ def career_assistant():
 
     try:
 
-        # ---------------------------------
-        # GET REQUEST DATA
-        # ---------------------------------
-
         data = request.get_json(silent=True)
 
         if not isinstance(data, dict):
 
             return jsonify({
-
                 "success": False,
-
                 "error": "Invalid request data."
-
             }), 400
 
         question = data.get("question", "")
 
-        # ---------------------------------
-        # VALIDATE QUESTION
-        # ---------------------------------
-
         if not isinstance(question, str):
 
             return jsonify({
-
                 "success": False,
-
                 "error": "Invalid question format."
-
             }), 400
 
         question = question.strip()
@@ -234,64 +231,52 @@ def career_assistant():
         if not question:
 
             return jsonify({
-
                 "success": False,
-
                 "error": "Please enter your question."
-
             }), 400
 
         if len(question) > 3000:
 
             return jsonify({
-
                 "success": False,
-
                 "error": "Maximum question length is 3000 characters."
-
             }), 400
 
-        # ---------------------------------
-        # GET RESUME CONTEXT
-        # ---------------------------------
+        # Get previous conversation
+
+        conversation_history = get_conversation_history()
+
+        # Get resume information
 
         resume_context = get_resume_context()
 
-        # ---------------------------------
-        # GENERATE AI RESPONSE
-        # ---------------------------------
+        # Generate response
 
         result = ask_career_assistant(
 
             question=question,
 
-            resume_text=resume_context
+            resume_text=resume_context,
+
+            conversation_history=conversation_history
 
         )
-
-        # Validate AI result.
 
         if not isinstance(result, dict):
 
             return jsonify({
-
                 "success": False,
-
                 "error": "Invalid response from AI service."
-
             }), 500
 
         if not result.get("success"):
 
             return jsonify({
-
                 "success": False,
-
                 "error": result.get(
                     "error",
                     "Unable to generate an answer."
                 )
-
             }), 500
 
         answer = result.get("answer", "")
@@ -299,36 +284,23 @@ def career_assistant():
         if not isinstance(answer, str) or not answer.strip():
 
             return jsonify({
-
                 "success": False,
-
                 "error": "AI returned an empty response."
-
             }), 500
 
         answer = answer.strip()
 
-        # ---------------------------------
-        # SAVE CHAT HISTORY
-        # ---------------------------------
+        # Save conversation
 
         new_chat = ChatHistory(
-
             user_id=current_user.id,
-
             message=question,
-
             response=answer
-
         )
 
         db.session.add(new_chat)
 
         db.session.commit()
-
-        # ---------------------------------
-        # RETURN AI RESPONSE
-        # ---------------------------------
 
         return jsonify({
 
@@ -349,11 +321,8 @@ def career_assistant():
         )
 
         return jsonify({
-
             "success": False,
-
             "error": "Something went wrong. Please try again."
-
         }), 500
 
 
@@ -372,9 +341,7 @@ def clear_career_history():
 
         ChatHistory.query.filter_by(
             user_id=current_user.id
-        ).delete(
-            synchronize_session=False
-        )
+        ).delete(synchronize_session=False)
 
         db.session.commit()
 
@@ -395,9 +362,6 @@ def clear_career_history():
         )
 
         return jsonify({
-
             "success": False,
-
             "error": "Unable to clear conversation history."
-
         }), 500
